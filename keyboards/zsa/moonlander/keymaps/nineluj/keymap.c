@@ -20,7 +20,7 @@ enum layers {
     _LAYER_GAMING
 };
 
-#define _BL_MT0 MT(MOD_RALT, KC_A) // base left mod tap 1
+#define _BL_MT0 MT(MOD_HYPR, KC_A) // base left mod tap 1
 #define _BL_MT1 MT(MOD_LGUI, KC_R)
 #define _BL_MT2 MT(MOD_LCTL, KC_S)
 #define _BL_MT3 MT(MOD_LSFT, KC_T)
@@ -28,7 +28,7 @@ enum layers {
 #define _BR_MT0 MT(MOD_LSFT, KC_N) // base right mod tap 1
 #define _BR_MT1 MT(MOD_LCTL, KC_E)
 #define _BR_MT2 MT(MOD_LGUI, KC_I)
-#define _BR_MT3 MT(MOD_RALT, KC_O)
+#define _BR_MT3 MT(MOD_HYPR, KC_O)
 
 #define _BL_T0 LT(_LAYER_NAV, KC_ESCAPE) // base left thumb 1
 #define _BL_T1 LT(_LAYER_FN, KC_SPACE)
@@ -180,15 +180,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [_LAYER_GAMING] = LAYOUT(
   // |-------+-------+-------+-------+-------+-------+-------|               |-------+-------+-------+-------+-------+-------+-------|
-      KC_ESC,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,TO(_LAYER_BASE),          KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,
+      KC_ESC,  KC_1,   KC_2,   KC_3,  KC_4,  KC_NO,TO(_LAYER_BASE),            KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,
   // |-------+-------+-------+-------+-------+-------+-------|               |-------+-------+-------+-------+-------+-------+-------|
-       KC_NO,  KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,   KC_NO,                  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,
+       KC_TAB,  KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,  KC_NO,                  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,
   // |-------+-------+-------+-------+-------+-------+-------|               |-------+-------+-------+-------+-------+-------+-------|
-       KC_NO,  KC_A,   KC_S,   KC_D ,  KC_F,   KC_G,   KC_NO,                  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,
+       KC_TAB,  KC_A,   KC_S,   KC_D ,  KC_F,   KC_G,  KC_NO,                  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,
   // |-------+-------+-------+-------+-------+-------+-------+               |-------+-------+-------+-------+-------+-------+-------+
-      KC_LSFT, KC_Z,   KC_X,   KC_C,   KC_D,   KC_V,                                   KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO, KC_NO,
+      KC_LSFT,  KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,                                  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,
   // |-------+-------+-------+-------+-------+-------/                               \-------+-------+-------+-------+-------+-------|
-       KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,                                   KC_NO, KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,
+      KC_LCTL,KC_LGUI, KC_NO,  KC_NO,  KC_NO,  KC_NO,                                   KC_NO, KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,
   // |-------+-------+-------+-------+-------+-------/                               \-------+-------+-------+-------+-------+-------|
   //
   //                                 |-------+-------+-------|               |-------+-------+-------|
@@ -197,11 +197,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 };
 
-const uint16_t PROGMEM test_combo1[] = {KC_A, KC_B, COMBO_END};
-const uint16_t PROGMEM test_combo2[] = {KC_C, KC_D, COMBO_END};
+/* const uint16_t PROGMEM test_combo1[] = {KC_A, KC_B, COMBO_END}; */
+/* const uint16_t PROGMEM test_combo2[] = {KC_C, KC_D, COMBO_END}; */
 combo_t key_combos[] = {
-    COMBO(test_combo1, KC_ESC),
-    COMBO(test_combo2, LCTL(KC_Z)), // keycodes with modifiers are possible too!
+    /* COMBO(test_combo1, KC_ESC), */
+    /* COMBO(test_combo2, LCTL(KC_Z)), // keycodes with modifiers are possible too! */
 };
 
 
