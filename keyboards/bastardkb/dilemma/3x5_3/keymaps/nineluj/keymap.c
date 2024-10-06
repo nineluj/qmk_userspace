@@ -39,31 +39,62 @@ enum dilemma_keymap_layers {
 #    define SNIPING KC_NO
 #endif // !POINTING_DEVICE_ENABLE
 
-// base layer, left side mod taps
-#define MALT_A MT(MOD_RALT, KC_A)
-#define MGUI_R MT(MOD_LGUI, KC_R)
-#define MCTL_S MT(MOD_LCTL, KC_S)
-#define MSFT_T MT(MOD_LSFT, KC_T)
+// sm_td setup
+#define MAX_DEFERRED_EXECUTORS 10
 
-// base layer, right side mod taps
-#define MSFT_N MT(MOD_LSFT, KC_N)
-#define MCTL_E MT(MOD_LCTL, KC_E)
-#define MGUI_I MT(MOD_LGUI, KC_I)
-#define MALT_O MT(MOD_RALT, KC_O)
+enum custom_keycodes {
+    SMTD_KEYCODES_BEGIN = SAFE_RANGE,
+    // left hand hrm
+    CKC_A, // reads as C(ustom) + KC_A, but you may give any name here
+    CKC_R,
+    CKC_S,
+    CKC_T,
+    // right hand hrm
+    CKC_N,
+    CKC_E,
+    CKC_I,
+    CKC_O,
+    // left thumb cluster
+    /* LT_OUT, // not used due to encoder */
+    LT_MID,
+    LT_INR,
+    // right thumb cluster
+    RT_INR,
+    RT_MID,
+    RT_OUT,
 
-#define PT_Z LT(LAYER_POINTER, KC_Z)
+    // pointer
+    CKC_Z,
+    CKC_SLSH,
 
-// base layer, thumb layer momentary toggle
-// first left is skipped, rotary encoder
-#define NAV_SPC LT(LAYER_NAVIGATION, KC_SPACE)
-#define FUN_ESC LT(LAYER_FUNCTION, KC_ESCAPE)
-#define SYM_ENT LT(LAYER_SYMBOLS, KC_ENTER)
-#define NUM_BSP LT(LAYER_NUMERAL, KC_BSPC)
-#define MED_TAB LT(LAYER_MEDIA, KC_TAB)
+    SMTD_KEYCODES_END,
+};
+#include "sm_td.h"
 
-// pointer layer mod tap
-#define PT_Z LT(LAYER_POINTER, KC_Z)
-#define PT_SLSH LT(LAYER_POINTER, KC_SLSH)
+void on_smtd_action(uint16_t keycode, smtd_action action, uint8_t tap_count) {
+    switch (keycode) {
+        // left hand hrm
+        SMTD_MT(CKC_A, KC_A, KC_LEFT_ALT)
+        SMTD_MT(CKC_R, KC_R, KC_LEFT_GUI)
+        SMTD_MT(CKC_S, KC_S, KC_LEFT_CTRL)
+        SMTD_MT(CKC_T, KC_T, KC_LSFT)
+        // right hand hrm
+        SMTD_MT(CKC_N, KC_N, KC_LSFT)
+        SMTD_MT(CKC_E, KC_E, KC_LEFT_CTRL)
+        SMTD_MT(CKC_I, KC_I, KC_LEFT_GUI)
+        SMTD_MT(CKC_O, KC_O, KC_LEFT_ALT)
+        // left thumb cluster
+        SMTD_LT(LT_MID, KC_SPACE, LAYER_NAVIGATION)
+        SMTD_LT(LT_INR, KC_ESCAPE, LAYER_FUNCTION)
+        // right thumb cluster
+        SMTD_LT(RT_INR, KC_TAB, LAYER_MEDIA)
+        SMTD_LT(RT_MID, KC_BSPC, LAYER_NUMERAL)
+        SMTD_LT(RT_OUT, KC_ENTER, LAYER_SYMBOLS)
+        // pointer keys
+        SMTD_LT(CKC_Z, KC_Z, LAYER_POINTER)
+        SMTD_LT(CKC_SLSH, KC_SLSH, LAYER_POINTER)
+    }
+}
 
 // actions
 #define _UNDO LGUI(KC_Z)
@@ -79,11 +110,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ╭─────────────────────────────────────────────╮ ╭─────────────────────────────────────────────╮
          KC_Q,    KC_W,     KC_F,    KC_P,   KC_B,       KC_J,    KC_L,    KC_U,   KC_Y,  KC_QUOT,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
-         MALT_A,  MGUI_R,  MCTL_S,  MSFT_T,  KC_G,       KC_M,  MSFT_N,  MCTL_E,  MGUI_I, MALT_O,
+         CKC_A,   CKC_R,    CKC_S,   CKC_T,   KC_G,      KC_M,   CKC_N,   CKC_E,   CKC_I,   CKC_O,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
-         PT_Z,    KC_X,    KC_C,    KC_D,    KC_V,       KC_K,    KC_H, KC_COMM,  KC_DOT, PT_SLSH,
+         CKC_Z,    KC_X,    KC_C,    KC_D,    KC_V,      KC_K,    KC_H, KC_COMM,  KC_DOT, CKC_SLSH,
   // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯
-                         KC_ESC, NAV_SPC, FUN_ESC,     MED_TAB, NUM_BSP, SYM_ENT
+                         KC_ESC, LT_MID, LT_INR,        RT_INR, RT_MID, RT_OUT
   //                   ╰───────────────────────────╯ ╰──────────────────────────╯
   ),
 
@@ -226,13 +257,41 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 #ifdef ENCODER_MAP_ENABLE
 // clang-format off
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
-    [LAYER_BASE]       = {ENCODER_CCW_CW(KC_WH_D, KC_WH_U),  ENCODER_CCW_CW(KC_VOLD, KC_VOLU)},
-    [LAYER_FUNCTION]   = {ENCODER_CCW_CW(KC_DOWN, KC_UP),    ENCODER_CCW_CW(KC_LEFT, KC_RGHT)},
-    [LAYER_NAVIGATION] = {ENCODER_CCW_CW(KC_PGDN, KC_PGUP),  ENCODER_CCW_CW(KC_VOLU, KC_VOLD)},
-    [LAYER_MEDIA]      = {ENCODER_CCW_CW(KC_PGDN, KC_PGUP),  ENCODER_CCW_CW(KC_VOLU, KC_VOLD)},
-    [LAYER_POINTER]    = {ENCODER_CCW_CW(RGB_HUD, RGB_HUI),  ENCODER_CCW_CW(RGB_SAD, RGB_SAI)},
-    [LAYER_NUMERAL]    = {ENCODER_CCW_CW(RGB_VAD, RGB_VAI),  ENCODER_CCW_CW(RGB_SPD, RGB_SPI)},
-    [LAYER_SYMBOLS]    = {ENCODER_CCW_CW(RGB_RMOD, RGB_MOD), ENCODER_CCW_CW(KC_LEFT, KC_RGHT)},
+    [LAYER_BASE]       = {ENCODER_CCW_CW(KC_WH_U, KC_WH_D)},
+    [LAYER_FUNCTION]   = {ENCODER_CCW_CW(KC_DOWN, KC_UP)},
+    [LAYER_NAVIGATION] = {ENCODER_CCW_CW(KC_PGDN, KC_PGUP)},
+    [LAYER_MEDIA]      = {ENCODER_CCW_CW(KC_PGDN, KC_PGUP)},
+    [LAYER_POINTER]    = {ENCODER_CCW_CW(RGB_HUD, RGB_HUI)},
+    [LAYER_NUMERAL]    = {ENCODER_CCW_CW(RGB_VAD, RGB_VAI)},
+    [LAYER_SYMBOLS]    = {ENCODER_CCW_CW(RGB_RMOD, RGB_MOD)},
 };
 // clang-format on
 #endif // ENCODER_MAP_ENABLE
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (!process_smtd(keycode, record)) {
+        return false;
+    }
+    return true;
+}
+
+bool caps_word_press_user(uint16_t keycode) {
+    switch (keycode) {
+        // Keycodes that continue Caps Word, with shift applied.
+        case KC_A ... KC_Z:
+            add_weak_mods(MOD_BIT(KC_LSFT)); // Apply shift to the next key.
+            return true;
+
+        // Keycodes that continue Caps Word, without shifting.
+        case KC_1 ... KC_0:
+        case KC_BSPC:
+        case KC_DEL:
+        // I have a dedicated underscore key, so no need to shift KC_MINS.
+        case KC_MINS:
+        case KC_UNDS:
+            return true;
+
+        default:
+            return false; // Deactivate Caps Word.
+    }
+}
