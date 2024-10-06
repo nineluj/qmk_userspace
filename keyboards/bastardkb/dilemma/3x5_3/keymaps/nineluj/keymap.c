@@ -101,7 +101,7 @@ void on_smtd_action(uint16_t keycode, smtd_action action, uint8_t tap_count) {
 #define _PASTE LGUI(KC_C)
 #define _COPY LGUI(KC_C)
 #define _CUT LGUI(KC_X)
-#define _REDO LGUI(S(KC_Y))
+#define _REDO LGUI(S(KC_Z))
 
 // clang-format off
 /** \brief Colemak (DH) layout (3 rows, 10 columns). */
@@ -175,11 +175,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * symmetrical to accomodate the left- and right-hand trackball.
  */
   [LAYER_MEDIA] = LAYOUT_split_3x5_3(
-    /* XXXXXXX,RGB_RMOD, RGB_TOG, RGB_MOD, XXXXXXX, XXXXXXX,RGB_RMOD, RGB_TOG, RGB_MOD, XXXXXXX, */
-    /* KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT, */
-    /* XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, */
-    /*                   _______, KC_MPLY, KC_MSTP, KC_MSTP, KC_MPLY, KC_MUTE */
-
   // ╭─────────────────────────────────────────────╮ ╭─────────────────────────────────────────────╮
        XXXXXXX,RGB_RMOD, RGB_TOG, RGB_MOD, XXXXXXX,   XXXXXXX,RGB_RMOD, RGB_TOG, RGB_MOD, XXXXXXX,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
@@ -260,9 +255,9 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
     [LAYER_BASE]       = {ENCODER_CCW_CW(KC_WH_U, KC_WH_D)},
     [LAYER_FUNCTION]   = {ENCODER_CCW_CW(KC_DOWN, KC_UP)},
     [LAYER_NAVIGATION] = {ENCODER_CCW_CW(KC_PGDN, KC_PGUP)},
-    [LAYER_MEDIA]      = {ENCODER_CCW_CW(KC_PGDN, KC_PGUP)},
+    [LAYER_MEDIA]      = {ENCODER_CCW_CW(RGB_VAD, RGB_VAI)},
     [LAYER_POINTER]    = {ENCODER_CCW_CW(RGB_HUD, RGB_HUI)},
-    [LAYER_NUMERAL]    = {ENCODER_CCW_CW(RGB_VAD, RGB_VAI)},
+    [LAYER_NUMERAL]    = {ENCODER_CCW_CW(_UNDO, _REDO)},
     [LAYER_SYMBOLS]    = {ENCODER_CCW_CW(RGB_RMOD, RGB_MOD)},
 };
 // clang-format on
@@ -294,4 +289,10 @@ bool caps_word_press_user(uint16_t keycode) {
         default:
             return false; // Deactivate Caps Word.
     }
+}
+
+uint32_t get_smtd_timeout(uint16_t keycode, smtd_timeout timeout) {
+    // Reduce the SMTD timeouts on hrm keys for easier rolling (TAPPING_TERM / 2 by default)
+    if (timeout == SMTD_TIMEOUT_RELEASE && keycode >= CKC_A && keycode <= CKC_O) return 10;
+    return get_smtd_timeout_default(timeout);
 }
