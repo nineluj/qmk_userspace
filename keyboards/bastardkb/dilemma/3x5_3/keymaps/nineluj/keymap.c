@@ -19,15 +19,7 @@
 
 #include QMK_KEYBOARD_H
 
-enum dilemma_keymap_layers {
-    LAYER_BASE = 0,
-    LAYER_FUNCTION,
-    LAYER_NAVIGATION,
-    LAYER_MEDIA,
-    LAYER_POINTER,
-    LAYER_NUMERAL,
-    LAYER_SYMBOLS,
-};
+enum dilemma_keymap_layers { LAYER_BASE = 0, LAYER_FUNCTION, LAYER_NAVIGATION, LAYER_MEDIA, LAYER_POINTER, LAYER_NUMERAL, LAYER_SYMBOLS, LAYER_VIRT_MOUSE };
 
 // Automatically enable sniping-mode on the pointer layer.
 // #define DILEMMA_AUTO_SNIPING_ON_LAYER LAYER_POINTER
@@ -41,6 +33,8 @@ enum dilemma_keymap_layers {
 
 // sm_td setup
 #define MAX_DEFERRED_EXECUTORS 10
+
+#define LT_OUT MO(LAYER_VIRT_MOUSE)
 
 enum custom_keycodes {
     SMTD_KEYCODES_BEGIN = SAFE_RANGE,
@@ -66,8 +60,9 @@ enum custom_keycodes {
     // pointer
     CKC_Z,
     CKC_SLSH,
-
     SMTD_KEYCODES_END,
+
+    CKC_0,
 };
 #include "sm_td.h"
 
@@ -110,11 +105,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ╭─────────────────────────────────────────────╮ ╭─────────────────────────────────────────────╮
          KC_Q,    KC_W,     KC_F,    KC_P,   KC_B,       KC_J,    KC_L,    KC_U,   KC_Y,  KC_QUOT,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
-         CKC_A,   CKC_R,    CKC_S,   CKC_T,   KC_G,      KC_M,   CKC_N,   CKC_E,   CKC_I,   CKC_O,
+         CKC_A,   CKC_R,    CKC_S,   CKC_T,  KC_G,       KC_M,   CKC_N,   CKC_E,   CKC_I,   CKC_O,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
-         CKC_Z,    KC_X,    KC_C,    KC_D,    KC_V,      KC_K,    KC_H, KC_COMM,  KC_DOT, CKC_SLSH,
+         CKC_Z,    KC_X,    KC_C,    KC_D,   KC_V,       KC_K,    KC_H, KC_COMM,  KC_DOT, CKC_SLSH,
   // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯
-                         KC_ESC, LT_MID, LT_INR,        RT_INR, RT_MID, RT_OUT
+                          LT_OUT, LT_MID, LT_INR,        RT_INR, RT_MID, RT_OUT
   //                   ╰───────────────────────────╯ ╰──────────────────────────╯
   ),
 
@@ -176,7 +171,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
   [LAYER_MEDIA] = LAYOUT_split_3x5_3(
   // ╭─────────────────────────────────────────────╮ ╭─────────────────────────────────────────────╮
-       XXXXXXX,RGB_RMOD, RGB_TOG, RGB_MOD, XXXXXXX,   XXXXXXX,RGB_RMOD, RGB_TOG, RGB_MOD, XXXXXXX,
+       XXXXXXX,RGB_RMOD, RGB_TOG, RGB_MOD, XXXXXXX,    XXXXXXX,RGB_RMOD, RGB_TOG, RGB_MOD, XXXXXXX,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
        KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT,    KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
@@ -212,9 +207,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
        KC_SCLN,    KC_4,    KC_5,  KC_6,  KC_EQL,      XXXXXXX, KC_LSFT, KC_LCTL, KC_LGUI, KC_LALT,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
-       KC_DOT,     KC_1,    KC_2,  KC_3,  KC_BSLS,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+       KC_GRAVE,   KC_1,    KC_2,  KC_3,  KC_BSLS,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯
-                         KC_LPRN, KC_0,  KC_MINS,      XXXXXXX, _______, _______
+                         KC_LPRN,  KC_0,  KC_MINS,      XXXXXXX, _______, _______
   //                   ╰───────────────────────────╯ ╰──────────────────────────╯
   ),
 
@@ -234,6 +229,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        KC_TILD, KC_EXLM,  KC_AT,  KC_HASH, KC_PIPE,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯
                          KC_LPRN, KC_RPRN, KC_UNDS,    XXXXXXX, _______, _______
+  //                   ╰───────────────────────────╯ ╰──────────────────────────╯
+  ),
+
+
+  [LAYER_VIRT_MOUSE] = LAYOUT_split_3x5_3(
+  // ╭─────────────────────────────────────────────╮ ╭─────────────────────────────────────────────╮
+       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
+       KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, KC_ESC,     XXXXXXX, MS_LEFT, MS_DOWN,  MS_UP,  MS_RGHT,
+  // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
+       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, MS_WHLD, MS_WHLU, XXXXXXX,
+  // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯
+                         XXXXXXX, XXXXXXX, _______,    MS_BTN3, MS_BTN1, MS_BTN2
   //                   ╰───────────────────────────╯ ╰──────────────────────────╯
   ),
 };
@@ -259,15 +267,38 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
     [LAYER_POINTER]    = {ENCODER_CCW_CW(RGB_HUD, RGB_HUI)},
     [LAYER_NUMERAL]    = {ENCODER_CCW_CW(_UNDO, _REDO)},
     [LAYER_SYMBOLS]    = {ENCODER_CCW_CW(RGB_RMOD, RGB_MOD)},
+    [LAYER_VIRT_MOUSE] = {ENCODER_CCW_CW(XXXXXXX, XXXXXXX)},
 };
 // clang-format on
 #endif // ENCODER_MAP_ENABLE
+
+const key_override_t zero_key_override = ko_make_basic(MOD_MASK_SHIFT, KC_0, KC_DOT);
+
+const key_override_t *key_overrides[] = {&zero_key_override};
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_smtd(keycode, record)) {
         return false;
     }
     return true;
+}
+
+uint32_t get_smtd_timeout(uint16_t keycode, smtd_timeout timeout) {
+    uint32_t fallback = get_smtd_timeout_default(timeout);
+    switch (keycode) {
+        case CKC_A:
+        case CKC_R:
+        case CKC_I:
+        case CKC_O:
+            if (timeout == SMTD_TIMEOUT_TAP) return fallback + (fallback * 25 / 100); // make it 25% longer for the weaker keys
+        case CKC_T:
+        case CKC_N:
+            if (timeout == SMTD_TIMEOUT_TAP) return fallback - (fallback * 25 / 100); // make it 25% shorter for the stronger shift keys
+    }
+
+    if (timeout == SMTD_TIMEOUT_RELEASE && keycode >= CKC_A && keycode <= CKC_O) return 10;
+
+    return fallback;
 }
 
 bool caps_word_press_user(uint16_t keycode) {
@@ -284,15 +315,10 @@ bool caps_word_press_user(uint16_t keycode) {
         // I have a dedicated underscore key, so no need to shift KC_MINS.
         case KC_MINS:
         case KC_UNDS:
+        case CKC_0:
             return true;
 
         default:
             return false; // Deactivate Caps Word.
     }
-}
-
-uint32_t get_smtd_timeout(uint16_t keycode, smtd_timeout timeout) {
-    // Reduce the SMTD timeouts on hrm keys for easier rolling (TAPPING_TERM / 2 by default)
-    if (timeout == SMTD_TIMEOUT_RELEASE && keycode >= CKC_A && keycode <= CKC_O) return 10;
-    return get_smtd_timeout_default(timeout);
 }
