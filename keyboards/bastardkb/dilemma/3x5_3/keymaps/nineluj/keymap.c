@@ -37,10 +37,13 @@ enum dilemma_keymap_layers { LAYER_BASE = 0, LAYER_FUNCTION, LAYER_NAVIGATION, L
 // single key aliases
 #define LT_OUT MO(LAYER_VIRT_MOUSE)
 #define MO_MOUSE MO(LAYER_VIRT_MOUSE)
-#define KC_BROWSER_TAB_PREV LGUI(S(KC_RBRC))
-#define KC_BROWSER_TAB_NEXT LGUI(S(KC_LBRC))
+#define KC_BROWSER_TAB_PREV LGUI(S(KC_LBRC))
+#define KC_BROWSER_TAB_NEXT LGUI(S(KC_RBRC))
 #define KC_WORKSPC_PREV LCTL(KC_LEFT)
 #define KC_WORKSPC_NEXT LCTL(KC_RIGHT)
+#define KC_BROWSER_ZOOM_IN LGUI(KC_EQUAL)
+#define KC_BROWSER_ZOOM_OUT LGUI(KC_MINUS)
+#define KC_BROWSER_ZOOM_RESET LGUI(KC_0)
 
 enum custom_keycodes {
     SMTD_KEYCODES_BEGIN = SAFE_RANGE,
@@ -71,6 +74,7 @@ enum custom_keycodes {
     // multi encoder magic
     MULTI_ENC_CCW,
     MULTI_ENC_CW,
+    MULT_ENC_CLK,
 };
 #include "sm_td.h"
 
@@ -182,7 +186,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯
-                         KC_MUTE, KC_MPLY, KC_MSTP,    XXXXXXX, _______, _______
+                     MULT_ENC_CLK, KC_MPLY, KC_MSTP,   XXXXXXX, _______, _______
   //                   ╰───────────────────────────╯ ╰──────────────────────────╯
   ),
 
@@ -284,18 +288,18 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 enum encoder_modifiers { ENC_NO = 0, ENC_SFT, ENC_CTL, ENC_GUI, ENC_ALT, NUM_ENC_MOD };
 
 // clang-format off
-const uint16_t PROGMEM multi_function_encoder_map[NUM_ENC_MOD][NUM_ENCODERS][NUM_DIRECTIONS] = {
-    //            CCW        CW
-    [ENC_NO]  = {{KC_VOLD, KC_VOLU}},
-    [ENC_SFT] = {{KC_WORKSPC_PREV, KC_WORKSPC_NEXT}},
-    [ENC_CTL] = {{KC_BROWSER_TAB_PREV, KC_BROWSER_TAB_NEXT}},
-    [ENC_GUI] = {{XXXXXXX, XXXXXXX}},
-    [ENC_ALT] = {{XXXXXXX, XXXXXXX}},
+const uint16_t PROGMEM multi_function_encoder_map[NUM_ENC_MOD][NUM_ENCODERS][3] = {
+    //            CCW        CW     Click
+    [ENC_NO]  = {{KC_VOLD, KC_VOLU, KC_MUTE}},
+    [ENC_SFT] = {{KC_WORKSPC_PREV, KC_WORKSPC_NEXT, XXXXXXX}},
+    [ENC_CTL] = {{KC_BROWSER_ZOOM_OUT, KC_BROWSER_ZOOM_IN, KC_BROWSER_ZOOM_RESET}},
+    [ENC_GUI] = {{KC_LEFT, KC_RIGHT, XXXXXXX}},
+    [ENC_ALT] = {{KC_BROWSER_TAB_PREV, KC_BROWSER_TAB_NEXT, XXXXXXX}},
 };
 // clang-format on
 
 bool process_multi_function_encoder(uint16_t input_keycode, keyrecord_t *record) {
-    if ((input_keycode != MULTI_ENC_CW && input_keycode != MULTI_ENC_CCW) || !record->event.pressed) {
+    if ((input_keycode != MULTI_ENC_CW && input_keycode != MULTI_ENC_CCW && input_keycode != MULT_ENC_CLK) || !record->event.pressed) {
         return true;
     }
 
@@ -304,25 +308,29 @@ bool process_multi_function_encoder(uint16_t input_keycode, keyrecord_t *record)
     uint8_t oneshot = get_oneshot_mods();
     uint8_t weak    = get_weak_mods();
 
-    bool is_cw   = input_keycode == MULTI_ENC_CW;
-    bool shifted = mods & MOD_MASK_SHIFT;
-    bool ctled   = mods & MOD_MASK_CTRL;
-    bool guied   = mods & MOD_MASK_GUI;
-    bool alted   = mods & MOD_MASK_ALT;
+    // Combine all modifier states
+    uint8_t all_mods = mods | oneshot | weak;
+
+    // Check individual modifier states
+    bool shifted = (all_mods & MOD_MASK_SHIFT) != 0;
+    bool ctled   = (all_mods & MOD_MASK_CTRL) != 0;
+    bool guied   = (all_mods & MOD_MASK_GUI) != 0;
+    bool alted   = (all_mods & MOD_MASK_ALT) != 0;
 
     uint16_t encoder_keycode;
-    uint8_t  encoder_idx = 0; // Assuming first encoder
+    uint8_t  encoder_idx  = 0; // Assuming first encoder
+    uint8_t  modifier_idx = input_keycode - MULTI_ENC_CCW;
 
     if (shifted) {
-        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_SFT][encoder_idx][is_cw]);
+        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_SFT][encoder_idx][modifier_idx]);
     } else if (ctled) {
-        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_CTL][encoder_idx][is_cw]);
+        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_CTL][encoder_idx][modifier_idx]);
     } else if (guied) {
-        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_GUI][encoder_idx][is_cw]);
+        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_GUI][encoder_idx][modifier_idx]);
     } else if (alted) {
-        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_ALT][encoder_idx][is_cw]);
+        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_ALT][encoder_idx][modifier_idx]);
     } else {
-        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_NO][encoder_idx][is_cw]);
+        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_NO][encoder_idx][modifier_idx]);
     }
 
     // Clear all mods temporarily
