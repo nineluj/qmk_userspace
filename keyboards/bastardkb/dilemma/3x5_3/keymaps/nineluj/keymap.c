@@ -34,8 +34,13 @@ enum dilemma_keymap_layers { LAYER_BASE = 0, LAYER_FUNCTION, LAYER_NAVIGATION, L
 // sm_td setup
 #define MAX_DEFERRED_EXECUTORS 10
 
+// single key aliases
 #define LT_OUT MO(LAYER_VIRT_MOUSE)
 #define MO_MOUSE MO(LAYER_VIRT_MOUSE)
+#define KC_BROWSER_TAB_PREV LGUI(S(KC_RBRC))
+#define KC_BROWSER_TAB_NEXT LGUI(S(KC_LBRC))
+#define KC_WORKSPC_PREV LCTL(KC_LEFT)
+#define KC_WORKSPC_NEXT LCTL(KC_RIGHT)
 
 enum custom_keycodes {
     SMTD_KEYCODES_BEGIN = SAFE_RANGE,
@@ -62,6 +67,10 @@ enum custom_keycodes {
     CKC_Z,
     CKC_SLSH,
     SMTD_KEYCODES_END,
+
+    // multi encoder magic
+    MULTI_ENC_CCW,
+    MULTI_ENC_CW,
 };
 #include "sm_td.h"
 
@@ -164,19 +173,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /**
  * \brief Media layer.
- *
- * Tertiary left- and right-hand layer is media and RGB control.  This layer is
- * symmetrical to accomodate the left- and right-hand trackball.
  */
   [LAYER_MEDIA] = LAYOUT_split_3x5_3(
   // ╭─────────────────────────────────────────────╮ ╭─────────────────────────────────────────────╮
-       XXXXXXX,RGB_RMOD, RGB_TOG, RGB_MOD, XXXXXXX,    XXXXXXX,RGB_RMOD, RGB_TOG, RGB_MOD, XXXXXXX,
+       XXXXXXX,RGB_RMOD, RGB_TOG, RGB_MOD, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
-       KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT,    KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT,
+       KC_MPRV, KC_VOLD, KC_MUTE, KC_VOLU, KC_MNXT,    XXXXXXX, KC_LSFT, KC_LCTL, KC_LGUI, KC_LALT,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
-       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    KC_INS, KC_HOME, KC_PGDN, KC_PGUP,  KC_END,
+       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯
-                         _______, KC_MPLY, KC_MSTP,    XXXXXXX, _______, _______
+                         KC_MUTE, KC_MPLY, KC_MSTP,    XXXXXXX, _______, _______
   //                   ╰───────────────────────────╯ ╰──────────────────────────╯
   ),
 
@@ -185,7 +191,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ╭─────────────────────────────────────────────╮ ╭─────────────────────────────────────────────╮
        QK_BOOT,  EE_CLR, XXXXXXX, DPI_MOD, S_D_MOD,    S_D_MOD, DPI_MOD, XXXXXXX,  EE_CLR, QK_BOOT,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
-       KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, XXXXXXX,    XXXXXXX, KC_LSFT, KC_LCTL, KC_LALT, KC_LGUI,
+       KC_LALT, KC_LGUI, KC_LCTL, KC_LSFT, XXXXXXX,    XXXXXXX, KC_LSFT, KC_LCTL, KC_LGUI, KC_LALT,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
        _______, DRGSCRL, SNIPING, KC_BTN3, XXXXXXX,    XXXXXXX, KC_BTN3, SNIPING, DRGSCRL, _______,
   // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯
@@ -247,6 +253,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 // clang-format on
 
+// -- advanced configuration starts here
+const key_override_t  zero_key_override = ko_make_basic(MOD_MASK_SHIFT, KC_0, KC_DOT);
+const key_override_t *key_overrides[]   = {&zero_key_override};
+
 #ifdef POINTING_DEVICE_ENABLE
 #    ifdef DILEMMA_AUTO_SNIPING_ON_LAYER
 layer_state_t layer_state_set_user(layer_state_t state) {
@@ -259,26 +269,87 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 #ifdef ENCODER_MAP_ENABLE
 // clang-format off
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
-    [LAYER_BASE]       = {ENCODER_CCW_CW(KC_WH_U, KC_WH_D)},
-    [LAYER_FUNCTION]   = {ENCODER_CCW_CW(KC_DOWN, KC_UP)},
-    [LAYER_NAVIGATION] = {ENCODER_CCW_CW(KC_PGDN, KC_PGUP)},
-    [LAYER_MEDIA]      = {ENCODER_CCW_CW(RGB_VAD, RGB_VAI)},
-    [LAYER_POINTER]    = {ENCODER_CCW_CW(KC_WH_L, KC_WH_R)},
-    [LAYER_NUMERAL]    = {ENCODER_CCW_CW(_UNDO, _REDO)},
-    [LAYER_SYMBOLS]    = {ENCODER_CCW_CW(RGB_RMOD, RGB_MOD)},
-    [LAYER_VIRT_MOUSE] = {ENCODER_CCW_CW(XXXXXXX, XXXXXXX)},
+    [LAYER_BASE]       = {ENCODER_CCW_CW(KC_WH_U, KC_WH_D)},  // vertical scrolling (regular)
+    [LAYER_FUNCTION]   = {ENCODER_CCW_CW(XXXXXXX, XXXXXXX)},  // hard to reach
+    [LAYER_NAVIGATION] = {ENCODER_CCW_CW(XXXXXXX, XXXXXXX)},  // hard to reach
+    [LAYER_MEDIA]      = {ENCODER_CCW_CW(MULTI_ENC_CCW, MULTI_ENC_CW)}, // enable multiple encoder fns w/ modifiers
+    [LAYER_POINTER]    = {ENCODER_CCW_CW(KC_WH_L, KC_WH_R)},  // horizontal scrolling
+    [LAYER_NUMERAL]    = {ENCODER_CCW_CW(_UNDO, _REDO)},      // for coding
+    [LAYER_SYMBOLS]    = {ENCODER_CCW_CW(KC_LEFT, KC_RIGHT)}, // for scrubbing through videos
+    [LAYER_VIRT_MOUSE] = {ENCODER_CCW_CW(XXXXXXX, XXXXXXX)},  // hard to reach
 };
 // clang-format on
 #endif // ENCODER_MAP_ENABLE
 
-const key_override_t zero_key_override = ko_make_basic(MOD_MASK_SHIFT, KC_0, KC_DOT);
+enum encoder_modifiers { ENC_NO = 0, ENC_SFT, ENC_CTL, ENC_GUI, ENC_ALT, NUM_ENC_MOD };
 
-const key_override_t *key_overrides[] = {&zero_key_override};
+// clang-format off
+const uint16_t PROGMEM multi_function_encoder_map[NUM_ENC_MOD][NUM_ENCODERS][NUM_DIRECTIONS] = {
+    //            CCW        CW
+    [ENC_NO]  = {{KC_VOLD, KC_VOLU}},
+    [ENC_SFT] = {{KC_WORKSPC_PREV, KC_WORKSPC_NEXT}},
+    [ENC_CTL] = {{KC_BROWSER_TAB_PREV, KC_BROWSER_TAB_NEXT}},
+    [ENC_GUI] = {{XXXXXXX, XXXXXXX}},
+    [ENC_ALT] = {{XXXXXXX, XXXXXXX}},
+};
+// clang-format on
+
+bool process_multi_function_encoder(uint16_t input_keycode, keyrecord_t *record) {
+    if ((input_keycode != MULTI_ENC_CW && input_keycode != MULTI_ENC_CCW) || !record->event.pressed) {
+        return true;
+    }
+
+    // Store the current modifier state
+    uint8_t mods    = get_mods();
+    uint8_t oneshot = get_oneshot_mods();
+    uint8_t weak    = get_weak_mods();
+
+    bool is_cw   = input_keycode == MULTI_ENC_CW;
+    bool shifted = mods & MOD_MASK_SHIFT;
+    bool ctled   = mods & MOD_MASK_CTRL;
+    bool guied   = mods & MOD_MASK_GUI;
+    bool alted   = mods & MOD_MASK_ALT;
+
+    uint16_t encoder_keycode;
+    uint8_t  encoder_idx = 0; // Assuming first encoder
+
+    if (shifted) {
+        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_SFT][encoder_idx][is_cw]);
+    } else if (ctled) {
+        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_CTL][encoder_idx][is_cw]);
+    } else if (guied) {
+        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_GUI][encoder_idx][is_cw]);
+    } else if (alted) {
+        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_ALT][encoder_idx][is_cw]);
+    } else {
+        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_NO][encoder_idx][is_cw]);
+    }
+
+    // Clear all mods temporarily
+    clear_mods();
+    clear_oneshot_mods();
+    clear_weak_mods();
+
+    // Send the keycode
+    tap_code16(encoder_keycode);
+
+    // Restore the original modifier state
+    set_mods(mods);
+    set_oneshot_mods(oneshot);
+    set_weak_mods(weak);
+
+    return false;
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_smtd(keycode, record)) {
         return false;
     }
+
+    if (!process_multi_function_encoder(keycode, record)) {
+        return false;
+    }
+
     return true;
 }
 
