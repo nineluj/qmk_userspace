@@ -254,6 +254,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // clang-format on
 
 // -- advanced configuration starts here
+const key_override_t  zero_key_override = ko_make_basic(MOD_MASK_SHIFT, KC_0, KC_DOT);
+const key_override_t *key_overrides[]   = {&zero_key_override};
 
 #ifdef POINTING_DEVICE_ENABLE
 #    ifdef DILEMMA_AUTO_SNIPING_ON_LAYER
@@ -279,29 +281,72 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 // clang-format on
 #endif // ENCODER_MAP_ENABLE
 
-const key_override_t  zero_key_override = ko_make_basic(MOD_MASK_SHIFT, KC_0, KC_DOT);
-const key_override_t *key_overrides[]   = {
-    &zero_key_override,
+enum encoder_modifiers { ENC_NO = 0, ENC_SFT, ENC_CTL, ENC_GUI, ENC_ALT, NUM_ENC_MOD };
 
-    // overrides to allow for multiple fns for the encoder based on the modifier keys
-    &ko_make_basic(0, MULTI_ENC_CCW, KC_VOLD),
-    &ko_make_basic(0, MULTI_ENC_CW, KC_VOLU),
-
-    &ko_make_basic(MOD_MASK_SHIFT, MULTI_ENC_CCW, KC_WORKSPC_PREV),
-    &ko_make_basic(MOD_MASK_SHIFT, MULTI_ENC_CW, KC_WORKSPC_NEXT),
-
-    &ko_make_basic(MOD_MASK_CTRL, MULTI_ENC_CCW, KC_BROWSER_TAB_PREV),
-    &ko_make_basic(MOD_MASK_CTRL, MULTI_ENC_CW, KC_BROWSER_TAB_NEXT),
-
-    &ko_make_basic(MOD_MASK_GUI, MULTI_ENC_CCW, XXXXXXX),
-    &ko_make_basic(MOD_MASK_GUI, MULTI_ENC_CW, XXXXXXX),
-
-    &ko_make_basic(MOD_MASK_ALT, MULTI_ENC_CCW, XXXXXXX),
-    &ko_make_basic(MOD_MASK_ALT, MULTI_ENC_CW, XXXXXXX),
+// clang-format off
+const uint16_t PROGMEM multi_function_encoder_map[NUM_ENC_MOD][NUM_ENCODERS][NUM_DIRECTIONS] = {
+    //            CCW        CW
+    [ENC_NO]  = {{KC_VOLD, KC_VOLU}},
+    [ENC_SFT] = {{KC_WORKSPC_PREV, KC_WORKSPC_NEXT}},
+    [ENC_CTL] = {{KC_BROWSER_TAB_PREV, KC_BROWSER_TAB_NEXT}},
+    [ENC_GUI] = {{XXXXXXX, XXXXXXX}},
+    [ENC_ALT] = {{XXXXXXX, XXXXXXX}},
 };
+// clang-format on
+
+bool process_multi_function_encoder(uint16_t input_keycode, keyrecord_t *record) {
+    if ((input_keycode != MULTI_ENC_CW && input_keycode != MULTI_ENC_CCW) || !record->event.pressed) {
+        return true;
+    }
+
+    // Store the current modifier state
+    uint8_t mods    = get_mods();
+    uint8_t oneshot = get_oneshot_mods();
+    uint8_t weak    = get_weak_mods();
+
+    bool is_cw   = input_keycode == MULTI_ENC_CW;
+    bool shifted = mods & MOD_MASK_SHIFT;
+    bool ctled   = mods & MOD_MASK_CTRL;
+    bool guied   = mods & MOD_MASK_GUI;
+    bool alted   = mods & MOD_MASK_ALT;
+
+    uint16_t encoder_keycode;
+    uint8_t  encoder_idx = 0; // Assuming first encoder
+
+    if (shifted) {
+        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_SFT][encoder_idx][is_cw]);
+    } else if (ctled) {
+        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_CTL][encoder_idx][is_cw]);
+    } else if (guied) {
+        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_GUI][encoder_idx][is_cw]);
+    } else if (alted) {
+        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_ALT][encoder_idx][is_cw]);
+    } else {
+        encoder_keycode = pgm_read_word(&multi_function_encoder_map[ENC_NO][encoder_idx][is_cw]);
+    }
+
+    // Clear all mods temporarily
+    clear_mods();
+    clear_oneshot_mods();
+    clear_weak_mods();
+
+    // Send the keycode
+    tap_code16(encoder_keycode);
+
+    // Restore the original modifier state
+    set_mods(mods);
+    set_oneshot_mods(oneshot);
+    set_weak_mods(weak);
+
+    return false;
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_smtd(keycode, record)) {
+        return false;
+    }
+
+    if (!process_multi_function_encoder(keycode, record)) {
         return false;
     }
 
