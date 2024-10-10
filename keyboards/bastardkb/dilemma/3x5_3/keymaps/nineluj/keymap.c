@@ -35,6 +35,7 @@ enum dilemma_keymap_layers { LAYER_BASE = 0, LAYER_FUNCTION, LAYER_NAVIGATION, L
 #define MAX_DEFERRED_EXECUTORS 10
 
 #define LT_OUT MO(LAYER_VIRT_MOUSE)
+#define MO_MOUSE MO(LAYER_VIRT_MOUSE)
 
 enum custom_keycodes {
     SMTD_KEYCODES_BEGIN = SAFE_RANGE,
@@ -61,8 +62,6 @@ enum custom_keycodes {
     CKC_Z,
     CKC_SLSH,
     SMTD_KEYCODES_END,
-
-    CKC_0,
 };
 #include "sm_td.h"
 
@@ -157,7 +156,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
        KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, KC_ESC,    CW_TOGG, KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
-       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    KC_INS, KC_HOME, KC_PGDN, KC_PGUP,  KC_END,
+       MO_MOUSE,XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    KC_INS, KC_HOME, KC_PGDN, KC_PGUP,  KC_END,
   // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯
                          XXXXXXX, XXXXXXX, _______,     KC_TAB, KC_DEL, KC_ENT
   //                   ╰───────────────────────────╯ ╰──────────────────────────╯
@@ -264,7 +263,7 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
     [LAYER_FUNCTION]   = {ENCODER_CCW_CW(KC_DOWN, KC_UP)},
     [LAYER_NAVIGATION] = {ENCODER_CCW_CW(KC_PGDN, KC_PGUP)},
     [LAYER_MEDIA]      = {ENCODER_CCW_CW(RGB_VAD, RGB_VAI)},
-    [LAYER_POINTER]    = {ENCODER_CCW_CW(RGB_HUD, RGB_HUI)},
+    [LAYER_POINTER]    = {ENCODER_CCW_CW(KC_WH_L, KC_WH_R)},
     [LAYER_NUMERAL]    = {ENCODER_CCW_CW(_UNDO, _REDO)},
     [LAYER_SYMBOLS]    = {ENCODER_CCW_CW(RGB_RMOD, RGB_MOD)},
     [LAYER_VIRT_MOUSE] = {ENCODER_CCW_CW(XXXXXXX, XXXXXXX)},
@@ -315,8 +314,6 @@ bool caps_word_press_user(uint16_t keycode) {
         // I have a dedicated underscore key, so no need to shift KC_MINS.
         case KC_MINS:
         case KC_UNDS:
-        case CKC_0:
-            return true;
 
         default:
             return false; // Deactivate Caps Word.

@@ -27,5 +27,6 @@
 #define TAPPING_TERM 350
 
 #define ENCODER_RESOLUTION 2
-#define MOUSEKEY_INERTIA
-#define MOUSEKEY_TIME_TO_MAX 20
+#define MOUSEKEY_TIME_TO_MAX 10
+
+#undef POINTING_DEVICE_GESTURES_SCROLL_ENABLE // disable scrolling by touching outer edge
