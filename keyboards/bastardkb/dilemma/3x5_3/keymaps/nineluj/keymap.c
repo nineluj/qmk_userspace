@@ -364,17 +364,37 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 uint32_t get_smtd_timeout(uint16_t keycode, smtd_timeout timeout) {
     uint32_t fallback = get_smtd_timeout_default(timeout);
     switch (keycode) {
+        // thumbs
+        case RT_INR:
+        case RT_MID:
+        case RT_OUT:
+        case LT_MID:
+        case LT_INR:
+            if (timeout == SMTD_TIMEOUT_TAP) return fallback + (fallback * 70 / 100); // make it longer for the thumb keys and weaker keys
+
         case CKC_A:
+        case CKC_O:
         case CKC_R:
         case CKC_I:
-        case CKC_O:
-            if (timeout == SMTD_TIMEOUT_TAP) return fallback + (fallback * 25 / 100); // make it 25% longer for the weaker keys
+            if (timeout == SMTD_TIMEOUT_TAP) return fallback * 2;
+
+        case CKC_S:
+        case CKC_E:
+            if (timeout == SMTD_TIMEOUT_TAP) return fallback + (fallback * 50 / 100);
+
         case CKC_T:
         case CKC_N:
-            if (timeout == SMTD_TIMEOUT_TAP) return fallback - (fallback * 25 / 100); // make it 25% shorter for the stronger shift keys
+            if (timeout == SMTD_TIMEOUT_TAP) return fallback - (fallback * 50 / 100); // make it shorter for the stronger shift keys
     }
 
-    if (timeout == SMTD_TIMEOUT_RELEASE && keycode >= CKC_A && keycode <= CKC_O) return 10;
+    /* if (timeout == SMTD_TIMEOUT_RELEASE && keycode >= CKC_A && keycode <= CKC_O) return 10; */
+
+    if (timeout == SMTD_TIMEOUT_RELEASE) {
+        switch (keycode) {
+            case CKC_A ... CKC_O:
+                return 8;
+        }
+    }
 
     return fallback;
 }
