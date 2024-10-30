@@ -283,24 +283,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // clang-format on
 
 // -- advanced configuration starts here
-const key_override_t *key_overrides[] = {&ko_make_basic(MOD_MASK_SHIFT, KC_0, KC_DOT), &ko_make_basic(MOD_MASK_SHIFT, KC_4, KC_LPRN), &ko_make_basic(MOD_MASK_SHIFT, KC_5, KC_LBRC), &ko_make_basic(MOD_MASK_SHIFT, KC_6, KC_LCBR)};
-
-// combos
-/* const uint16_t PROGMEM combo_lprn[] = {KC_SCLN, KC_4, COMBO_END}; */
-/* const uint16_t PROGMEM combo_rprn[] = {KC_5, KC_6, COMBO_END}; */
-/* const uint16_t PROGMEM combo_lbrk[] = {KC_COLN, KC_CIRC, COMBO_END}; */
-/* const uint16_t PROGMEM combo_rbrk[] = {KC_PERC, KC_DLR, COMBO_END}; */
-/* const uint16_t PROGMEM combo_test[] = {KC_C, KC_D, COMBO_END}; */
-
-/* // clang-format off */
-/* combo_t key_combos[] = { */
-/*     COMBO(combo_lprn, KC_LPRN), */
-/*     COMBO(combo_rprn, KC_RPRN), */
-/*     COMBO(combo_lbrk, KC_LBRC), */
-/*     COMBO(combo_rbrk, KC_RBRC), */
-/*     COMBO(combo_test, KC_0), */
-/* }; */
-/* // clang-format on */
+// clang-format off
+const key_override_t *key_overrides[] = {
+    &ko_make_basic(MOD_MASK_SHIFT, KC_0, KC_DOT),
+    &ko_make_basic(MOD_MASK_SHIFT, KC_4, KC_LPRN),
+    &ko_make_basic(MOD_MASK_SHIFT, KC_5, KC_LBRC),
+    &ko_make_basic(MOD_MASK_SHIFT, KC_6, KC_LCBR)
+};
+// clang-format on
 
 #ifdef POINTING_DEVICE_ENABLE
 #    ifdef DILEMMA_AUTO_SNIPING_ON_LAYER
