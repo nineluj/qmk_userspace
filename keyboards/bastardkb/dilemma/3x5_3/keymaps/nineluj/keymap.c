@@ -19,7 +19,7 @@
 
 #include QMK_KEYBOARD_H
 
-enum dilemma_keymap_layers { LAYER_BASE = 0, LAYER_FUNCTION, LAYER_NAVIGATION, LAYER_MEDIA, LAYER_POINTER, LAYER_NUMERAL, LAYER_SYMBOLS, LAYER_VIRT_MOUSE };
+enum dilemma_keymap_layers { LAYER_BASE = 0, LAYER_FUNCTION, LAYER_NAVIGATION, LAYER_MEDIA, LAYER_POINTER, LAYER_NUMERAL, LAYER_SYMBOLS, LAYER_VIRT_MOUSE, LAYER_GAMING };
 
 // Automatically enable sniping-mode on the pointer layer.
 // #define DILEMMA_AUTO_SNIPING_ON_LAYER LAYER_POINTER
@@ -35,7 +35,7 @@ enum dilemma_keymap_layers { LAYER_BASE = 0, LAYER_FUNCTION, LAYER_NAVIGATION, L
 #define MAX_DEFERRED_EXECUTORS 10
 
 // single key aliases
-#define LT_OUT MO(LAYER_VIRT_MOUSE)
+#define LT_OUT TO(LAYER_GAMING)
 #define MO_MOUSE MO(LAYER_VIRT_MOUSE)
 #define KC_BROWSER_TAB_PREV LGUI(S(KC_LBRC))
 #define KC_BROWSER_TAB_NEXT LGUI(S(KC_RBRC))
@@ -44,6 +44,8 @@ enum dilemma_keymap_layers { LAYER_BASE = 0, LAYER_FUNCTION, LAYER_NAVIGATION, L
 #define KC_BROWSER_ZOOM_IN LGUI(KC_EQUAL)
 #define KC_BROWSER_ZOOM_OUT LGUI(KC_MINUS)
 #define KC_BROWSER_ZOOM_RESET LGUI(KC_0)
+
+#define CKC_ESC LT(0, KC_NO)
 
 enum custom_keycodes {
     SMTD_KEYCODES_BEGIN = SAFE_RANGE,
@@ -151,7 +153,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_PAUS,  KC_F1,  KC_F2,   KC_F3,  KC_F10,
   // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯
-                         XXXXXXX, _______, XXXXXXX,     KC_TAB,  KC_BSPC, KC_ENT
+                         XXXXXXX, XXXXXXX, _______,     KC_TAB,  KC_BSPC, KC_ENT
   //                   ╰───────────────────────────╯ ╰──────────────────────────╯
   ),
 
@@ -253,13 +255,52 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                          XXXXXXX, XXXXXXX, _______,    MS_BTN3, MS_BTN1, MS_BTN2
   //                   ╰───────────────────────────╯ ╰──────────────────────────╯
   ),
+
+  [LAYER_GAMING] = LAYOUT_split_3x5_3(
+  // ╭─────────────────────────────────────────────╮ ╭─────────────────────────────────────────────╮
+         KC_Q,    KC_W,     KC_E,    KC_R,   KC_T,       KC_Y,    KC_U,    KC_I,   KC_O,  KC_P,
+  // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
+         KC_A,    KC_S,     KC_D,    KC_F,   KC_G,       KC_H,    KC_J,    KC_K,   KC_L,  KC_SCLN,
+  // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
+       KC_LCTL,    KC_X,     KC_C,    KC_V,   KC_B,       KC_N,    KC_M, KC_COMM,  KC_DOT, CKC_SLSH,
+  // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯
+                      TO(LAYER_BASE), KC_SPC, CKC_ESC,   RT_INR, KC_SPC, RT_OUT
+  //                   ╰───────────────────────────╯ ╰──────────────────────────╯
+  ),
+  /* [LAYER_QWERTY] = LAYOUT_split_3x5_3( */
+  /* // ╭─────────────────────────────────────────────╮ ╭─────────────────────────────────────────────╮ */
+  /*        KC_Q,    KC_W,     KC_E,    KC_R,   KC_T,       KC_Y,    KC_U,    KC_I,   KC_O,  KC_P, */
+  /* // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤ */
+  /*        KC_A,    KC_S,     KC_D,    KC_F,   KC_G,       KC_H,    KC_J,    KC_K,   KC_L,  KC_SCLN, */
+  /* // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤ */
+  /*        KC_Z,    KC_X,     KC_C,    KC_V,   KC_B,       KC_N,    KC_M, KC_COMM,  KC_DOT, CKC_SLSH, */
+  /* // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯ */
+  /*                     TO(LAYER_BASE), KC_SPC, KC_ESC,   RT_INR, KC_SPC, RT_OUT */
+  /* //                   ╰───────────────────────────╯ ╰──────────────────────────╯ */
+  /* ), */
 };
 
 // clang-format on
 
 // -- advanced configuration starts here
-const key_override_t  zero_key_override = ko_make_basic(MOD_MASK_SHIFT, KC_0, KC_DOT);
-const key_override_t *key_overrides[]   = {&zero_key_override};
+const key_override_t *key_overrides[] = {&ko_make_basic(MOD_MASK_SHIFT, KC_0, KC_DOT), &ko_make_basic(MOD_MASK_SHIFT, KC_4, KC_LPRN), &ko_make_basic(MOD_MASK_SHIFT, KC_5, KC_LBRC), &ko_make_basic(MOD_MASK_SHIFT, KC_6, KC_LCBR)};
+
+// combos
+/* const uint16_t PROGMEM combo_lprn[] = {KC_SCLN, KC_4, COMBO_END}; */
+/* const uint16_t PROGMEM combo_rprn[] = {KC_5, KC_6, COMBO_END}; */
+/* const uint16_t PROGMEM combo_lbrk[] = {KC_COLN, KC_CIRC, COMBO_END}; */
+/* const uint16_t PROGMEM combo_rbrk[] = {KC_PERC, KC_DLR, COMBO_END}; */
+/* const uint16_t PROGMEM combo_test[] = {KC_C, KC_D, COMBO_END}; */
+
+/* // clang-format off */
+/* combo_t key_combos[] = { */
+/*     COMBO(combo_lprn, KC_LPRN), */
+/*     COMBO(combo_rprn, KC_RPRN), */
+/*     COMBO(combo_lbrk, KC_LBRC), */
+/*     COMBO(combo_rbrk, KC_RBRC), */
+/*     COMBO(combo_test, KC_0), */
+/* }; */
+/* // clang-format on */
 
 #ifdef POINTING_DEVICE_ENABLE
 #    ifdef DILEMMA_AUTO_SNIPING_ON_LAYER
@@ -281,6 +322,7 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
     [LAYER_NUMERAL]    = {ENCODER_CCW_CW(_UNDO, _REDO)},      // for coding
     [LAYER_SYMBOLS]    = {ENCODER_CCW_CW(KC_LEFT, KC_RIGHT)}, // for scrubbing through videos
     [LAYER_VIRT_MOUSE] = {ENCODER_CCW_CW(XXXXXXX, XXXXXXX)},  // hard to reach
+    [LAYER_GAMING]     = {ENCODER_CCW_CW(XXXXXXX, XXXXXXX)},
 };
 // clang-format on
 #endif // ENCODER_MAP_ENABLE
@@ -349,8 +391,28 @@ bool process_multi_function_encoder(uint16_t input_keycode, keyrecord_t *record)
     return false;
 }
 
+// this is not a built-in _user function
+bool process_my_custom_keycodes(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case CKC_ESC:
+            if (record->tap.count && record->event.pressed) {
+                tap_code16(KC_ESC); // Intercept tap function
+            } else if (record->event.pressed) {
+                register_code(KC_TAB); // Intercept hold function
+            } else {
+                unregister_code(KC_TAB);
+            }
+            return false;
+    }
+    return true;
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_smtd(keycode, record)) {
+        return false;
+    }
+
+    if (!process_my_custom_keycodes(keycode, record)) {
         return false;
     }
 
@@ -418,3 +480,55 @@ bool caps_word_press_user(uint16_t keycode) {
             return false; // Deactivate Caps Word.
     }
 }
+
+// RGB underlight customization
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    uint8_t layer = get_highest_layer(layer_state);
+    if (layer > 0) {
+        HSV hsv = rgb_matrix_get_hsv();
+        switch (get_highest_layer(layer_state)) {
+            case LAYER_BASE:
+                hsv = (HSV){HSV_CHARTREUSE};
+                break;
+            case LAYER_FUNCTION:
+                hsv = (HSV){HSV_WHITE};
+                break;
+            case LAYER_NAVIGATION:
+                hsv = (HSV){HSV_PURPLE};
+                break;
+            case LAYER_MEDIA:
+                hsv = (HSV){HSV_TEAL};
+                break;
+            case LAYER_POINTER:
+                hsv = (HSV){HSV_AZURE};
+                break;
+            case LAYER_NUMERAL:
+                hsv = (HSV){HSV_MAGENTA};
+                break;
+            case LAYER_SYMBOLS:
+                hsv = (HSV){HSV_ORANGE};
+                break;
+            case LAYER_VIRT_MOUSE:
+                hsv = (HSV){HSV_CYAN};
+                break;
+            case LAYER_GAMING:
+                hsv = (HSV){HSV_GOLD};
+                break;
+            default:
+                hsv = (HSV){HSV_RED};
+                break;
+        };
+
+        if (hsv.v > rgb_matrix_get_val()) {
+            hsv.v = MIN(rgb_matrix_get_val() + 22, 255);
+        }
+        RGB rgb = hsv_to_rgb(hsv);
+
+        for (uint8_t i = led_min; i < led_max; i++) {
+            if (HAS_FLAGS(g_led_config.flags[i], LED_FLAG_UNDERGLOW)) {
+                rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
+            }
+        }
+    }
+    return false;
+};
