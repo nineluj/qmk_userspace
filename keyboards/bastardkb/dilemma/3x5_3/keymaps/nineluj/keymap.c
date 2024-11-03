@@ -45,8 +45,6 @@ enum dilemma_keymap_layers { LAYER_BASE = 0, LAYER_FUNCTION, LAYER_NAVIGATION, L
 #define KC_BROWSER_ZOOM_OUT LGUI(KC_MINUS)
 #define KC_BROWSER_ZOOM_RESET LGUI(KC_0)
 
-#define CKC_ESC LT(0, KC_NO)
-
 enum custom_keycodes {
     SMTD_KEYCODES_BEGIN = SAFE_RANGE,
     // left hand hrm
@@ -72,6 +70,8 @@ enum custom_keycodes {
     CKC_Z,
     CKC_SLSH,
     SMTD_KEYCODES_END,
+
+    CKC_ESC,
 
     // multi encoder magic
     MULTI_ENC_CCW,
@@ -262,9 +262,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
          KC_A,    KC_S,     KC_D,    KC_F,   KC_G,       KC_H,    KC_J,    KC_K,   KC_L,  KC_SCLN,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
-       KC_LCTL,    KC_X,     KC_C,    KC_V,   KC_B,       KC_N,    KC_M, KC_COMM,  KC_DOT, CKC_SLSH,
+       KC_LCTL,    KC_X,     KC_C,    KC_V,   KC_B,      KC_N,    KC_M, KC_COMM,  KC_DOT, CKC_SLSH,
   // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯
-                      TO(LAYER_BASE), KC_SPC, CKC_ESC,   RT_INR, KC_SPC, RT_OUT
+                    TO(LAYER_BASE), KC_SPC, CKC_ESC,     RT_INR, KC_SPC, RT_OUT
   //                   ╰───────────────────────────╯ ╰──────────────────────────╯
   ),
 
@@ -276,19 +276,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
          KC_Z,    KC_X,     KC_C,    KC_V,   KC_B,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯
-          TO(LAYER_BASE), KC_SPC, TO(LAYER_DOFUS_2),   XXXXXXX, XXXXXXX, XXXXXXX
+                   TO(LAYER_BASE), KC_LCTL, KC_ESC,    XXXXXXX, XXXXXXX, XXXXXXX
   //                   ╰───────────────────────────╯ ╰──────────────────────────╯
   ),
 
   [LAYER_DOFUS_2] = LAYOUT_split_3x5_3(
   // ╭─────────────────────────────────────────────╮ ╭─────────────────────────────────────────────╮
-        KC_F1,    KC_F2,   KC_F3,   KC_F4,  KC_F5,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        KC_F15,  KC_F16,  KC_F17,  KC_F18,  KC_F19,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
          KC_0,    KC_1,     KC_2,    KC_3,   KC_4,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
          KC_5,    KC_6,     KC_7,    KC_8,   KC_9,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯
-          TO(LAYER_BASE), KC_SPC, TO(LAYER_DOFUS_1),   XXXXXXX, XXXXXXX, XXXXXXX
+                    TO(LAYER_BASE), KC_LCTL, KC_SPC,   XXXXXXX, XXXXXXX, XXXXXXX
   //                   ╰───────────────────────────╯ ╰──────────────────────────╯
   ),
   /* [LAYER_QWERTY] = LAYOUT_split_3x5_3( */
@@ -345,8 +345,8 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
     [LAYER_VIRT_MOUSE] = {ENCODER_CCW_CW(XXXXXXX, XXXXXXX)},  // hard to reach
 
     [LAYER_GAMING]     = {ENCODER_CCW_CW(XXXXXXX, XXXXXXX)},
-    [LAYER_DOFUS_1]    = {ENCODER_CCW_CW(KC_WH_U, KC_WH_D)},
-    [LAYER_DOFUS_2]    = {ENCODER_CCW_CW(KC_WH_U, KC_WH_D)},
+    [LAYER_DOFUS_1]    = {ENCODER_CCW_CW(KC_ESC, TO(LAYER_DOFUS_2))},
+    [LAYER_DOFUS_2]    = {ENCODER_CCW_CW(KC_ESC, TO(LAYER_DOFUS_1))},
 };
 // clang-format on
 #endif // ENCODER_MAP_ENABLE
