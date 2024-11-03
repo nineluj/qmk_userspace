@@ -19,7 +19,7 @@
 
 #include QMK_KEYBOARD_H
 
-enum dilemma_keymap_layers { LAYER_BASE = 0, LAYER_FUNCTION, LAYER_NAVIGATION, LAYER_MEDIA, LAYER_POINTER, LAYER_NUMERAL, LAYER_SYMBOLS, LAYER_VIRT_MOUSE, LAYER_GAMING };
+enum dilemma_keymap_layers { LAYER_BASE = 0, LAYER_FUNCTION, LAYER_NAVIGATION, LAYER_MEDIA, LAYER_POINTER, LAYER_NUMERAL, LAYER_SYMBOLS, LAYER_VIRT_MOUSE, LAYER_GAMING, LAYER_DOFUS_1, LAYER_DOFUS_2 };
 
 // Automatically enable sniping-mode on the pointer layer.
 // #define DILEMMA_AUTO_SNIPING_ON_LAYER LAYER_POINTER
@@ -35,7 +35,7 @@ enum dilemma_keymap_layers { LAYER_BASE = 0, LAYER_FUNCTION, LAYER_NAVIGATION, L
 #define MAX_DEFERRED_EXECUTORS 10
 
 // single key aliases
-#define LT_OUT TO(LAYER_GAMING)
+#define LT_OUT LGUI(LCTL(KC_Q))
 #define MO_MOUSE MO(LAYER_VIRT_MOUSE)
 #define KC_BROWSER_TAB_PREV LGUI(S(KC_LBRC))
 #define KC_BROWSER_TAB_NEXT LGUI(S(KC_RBRC))
@@ -123,7 +123,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
          CKC_Z,    KC_X,    KC_C,    KC_D,   KC_V,       KC_K,    KC_H, KC_COMM,  KC_DOT, CKC_SLSH,
   // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯
-                          LT_OUT, LT_MID, LT_INR,        RT_INR, RT_MID, RT_OUT
+                           LT_OUT, LT_MID, LT_INR,       RT_INR, RT_MID, RT_OUT
   //                   ╰───────────────────────────╯ ╰──────────────────────────╯
   ),
 
@@ -267,6 +267,30 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                       TO(LAYER_BASE), KC_SPC, CKC_ESC,   RT_INR, KC_SPC, RT_OUT
   //                   ╰───────────────────────────╯ ╰──────────────────────────╯
   ),
+
+  [LAYER_DOFUS_1] = LAYOUT_split_3x5_3(
+  // ╭─────────────────────────────────────────────╮ ╭─────────────────────────────────────────────╮
+         KC_Q,    KC_W,     KC_E,    KC_R,   KC_T,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
+         KC_A,    KC_S,     KC_D,    KC_F,   KC_G,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
+         KC_Z,    KC_X,     KC_C,    KC_V,   KC_B,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯
+          TO(LAYER_BASE), KC_SPC, TO(LAYER_DOFUS_2),   XXXXXXX, XXXXXXX, XXXXXXX
+  //                   ╰───────────────────────────╯ ╰──────────────────────────╯
+  ),
+
+  [LAYER_DOFUS_2] = LAYOUT_split_3x5_3(
+  // ╭─────────────────────────────────────────────╮ ╭─────────────────────────────────────────────╮
+        KC_F1,    KC_F2,   KC_F3,   KC_F4,  KC_F5,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
+         KC_0,    KC_1,     KC_2,    KC_3,   KC_4,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
+         KC_5,    KC_6,     KC_7,    KC_8,   KC_9,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯
+          TO(LAYER_BASE), KC_SPC, TO(LAYER_DOFUS_1),   XXXXXXX, XXXXXXX, XXXXXXX
+  //                   ╰───────────────────────────╯ ╰──────────────────────────╯
+  ),
   /* [LAYER_QWERTY] = LAYOUT_split_3x5_3( */
   /* // ╭─────────────────────────────────────────────╮ ╭─────────────────────────────────────────────╮ */
   /*        KC_Q,    KC_W,     KC_E,    KC_R,   KC_T,       KC_Y,    KC_U,    KC_I,   KC_O,  KC_P, */
@@ -290,6 +314,13 @@ const key_override_t *key_overrides[] = {
     &ko_make_basic(MOD_MASK_SHIFT, KC_5, KC_LBRC),
     &ko_make_basic(MOD_MASK_SHIFT, KC_6, KC_LCBR)
 };
+
+const uint16_t PROGMEM combo1[] = {KC_Q, KC_B, COMBO_END};
+const uint16_t PROGMEM combo2[] = {KC_W, KC_B, COMBO_END};
+combo_t key_combos[] = {
+    COMBO(combo1, TO(LAYER_DOFUS_1)),
+    COMBO(combo2, TO(LAYER_GAMING)),
+};
 // clang-format on
 
 #ifdef POINTING_DEVICE_ENABLE
@@ -312,7 +343,10 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
     [LAYER_NUMERAL]    = {ENCODER_CCW_CW(_UNDO, _REDO)},      // for coding
     [LAYER_SYMBOLS]    = {ENCODER_CCW_CW(KC_LEFT, KC_RIGHT)}, // for scrubbing through videos
     [LAYER_VIRT_MOUSE] = {ENCODER_CCW_CW(XXXXXXX, XXXXXXX)},  // hard to reach
+
     [LAYER_GAMING]     = {ENCODER_CCW_CW(XXXXXXX, XXXXXXX)},
+    [LAYER_DOFUS_1]    = {ENCODER_CCW_CW(KC_WH_U, KC_WH_D)},
+    [LAYER_DOFUS_2]    = {ENCODER_CCW_CW(KC_WH_U, KC_WH_D)},
 };
 // clang-format on
 #endif // ENCODER_MAP_ENABLE
@@ -503,6 +537,12 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
                 break;
             case LAYER_GAMING:
                 hsv = (HSV){HSV_GOLD};
+                break;
+            case LAYER_DOFUS_1:
+                hsv = (HSV){HSV_PINK};
+                break;
+            case LAYER_DOFUS_2:
+                hsv = (HSV){HSV_GREEN};
                 break;
             default:
                 hsv = (HSV){HSV_RED};
