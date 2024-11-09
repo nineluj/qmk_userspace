@@ -149,9 +149,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ╭─────────────────────────────────────────────╮ ╭─────────────────────────────────────────────╮
        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_PSCR,  KC_F7,  KC_F8,   KC_F9,  KC_F12,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
-       KC_LALT, KC_LGUI, KC_LCTL, KC_LSFT, KC_ESC,      KC_SCRL,  KC_F4,  KC_F5,   KC_F6,  KC_F11,
+       KC_LALT, KC_LGUI, KC_LCTL, KC_LSFT, KC_ESC,      KC_PAUS,  KC_F4,  KC_F5,   KC_F6,  KC_F11,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
-       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_PAUS,  KC_F1,  KC_F2,   KC_F3,  KC_F10,
+       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_SCRL,  KC_F1,  KC_F2,   KC_F3,  KC_F10,
   // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯
                          XXXXXXX, XXXXXXX, _______,     KC_TAB,  KC_BSPC, KC_ENT
   //                   ╰───────────────────────────╯ ╰──────────────────────────╯
@@ -166,7 +166,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * base layer to avoid having to layer change mid edit and to enable auto-repeat.
  */
   [LAYER_NAVIGATION] = LAYOUT_split_3x5_3(
-  // ╭─────────────────────────────────────────────╮ ╭─────────────────────────────────────────────╮
+ // ╭─────────────────────────────────────────────╮ ╭─────────────────────────────────────────────╮
        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    _REDO,   _PASTE,  _COPY,     _CUT,   _UNDO,
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
        KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, KC_ESC,    CW_TOGG, KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT,
@@ -276,7 +276,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├─────────────────────────────────────────────┤ ├─────────────────────────────────────────────┤
          KC_Z,    KC_X,     KC_C,    KC_V,   KC_B,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   // ╰─────────────────────────────────────────────┤ ├─────────────────────────────────────────────╯
-                   TO(LAYER_BASE), KC_LCTL, KC_ESC,    XXXXXXX, XXXXXXX, XXXXXXX
+                   TO(LAYER_BASE), KC_LSFT, KC_ESC,    XXXXXXX, XXXXXXX, XXXXXXX
   //                   ╰───────────────────────────╯ ╰──────────────────────────╯
   ),
 
@@ -345,8 +345,8 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
     [LAYER_VIRT_MOUSE] = {ENCODER_CCW_CW(XXXXXXX, XXXXXXX)},  // hard to reach
 
     [LAYER_GAMING]     = {ENCODER_CCW_CW(XXXXXXX, XXXXXXX)},
-    [LAYER_DOFUS_1]    = {ENCODER_CCW_CW(KC_ESC, TO(LAYER_DOFUS_2))},
-    [LAYER_DOFUS_2]    = {ENCODER_CCW_CW(KC_ESC, TO(LAYER_DOFUS_1))},
+    [LAYER_DOFUS_1]    = {ENCODER_CCW_CW(TO(LAYER_DOFUS_1), TO(LAYER_DOFUS_2))},
+    [LAYER_DOFUS_2]    = {ENCODER_CCW_CW(TO(LAYER_DOFUS_1), TO(LAYER_DOFUS_2))},
 };
 // clang-format on
 #endif // ENCODER_MAP_ENABLE
