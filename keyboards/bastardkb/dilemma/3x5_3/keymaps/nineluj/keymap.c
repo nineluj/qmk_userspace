@@ -46,8 +46,9 @@ enum dilemma_keymap_layers { LAYER_BASE = 0, LAYER_FUNCTION, LAYER_NAVIGATION, L
 #define KC_BROWSER_ZOOM_RESET LGUI(KC_0)
 
 enum custom_keycodes {
+    SMTD_KEYCODES_BEGIN = SAFE_RANGE,
     // left hand hrm
-    CKC_A = SAFE_RANGE, // reads as C(ustom) + KC_A, but you may give any name here
+    CKC_A, // reads as C(ustom) + KC_A, but you may give any name here
     CKC_R,
     CKC_S,
     CKC_T,
@@ -68,6 +69,7 @@ enum custom_keycodes {
     // pointer
     CKC_Z,
     CKC_SLSH,
+    SMTD_KEYCODES_END,
 
     CKC_ESC,
 
@@ -76,6 +78,32 @@ enum custom_keycodes {
     MULTI_ENC_CW,
     MULT_ENC_CLK,
 };
+#include "sm_td.h"
+
+void on_smtd_action(uint16_t keycode, smtd_action action, uint8_t tap_count) {
+    switch (keycode) {
+        // left hand hrm
+        SMTD_MT(CKC_A, KC_A, KC_LEFT_ALT)
+        SMTD_MT(CKC_R, KC_R, KC_LEFT_GUI)
+        SMTD_MT(CKC_S, KC_S, KC_LEFT_CTRL)
+        SMTD_MT(CKC_T, KC_T, KC_LSFT)
+        // right hand hrm
+        SMTD_MT(CKC_N, KC_N, KC_LSFT)
+        SMTD_MT(CKC_E, KC_E, KC_LEFT_CTRL)
+        SMTD_MT(CKC_I, KC_I, KC_LEFT_GUI)
+        SMTD_MT(CKC_O, KC_O, KC_LEFT_ALT)
+        // left thumb cluster
+        SMTD_LT(LT_MID, KC_SPACE, LAYER_NAVIGATION)
+        SMTD_LT(LT_INR, KC_ESCAPE, LAYER_FUNCTION)
+        // right thumb cluster
+        SMTD_LT(RT_INR, KC_TAB, LAYER_MEDIA)
+        SMTD_LT(RT_MID, KC_BSPC, LAYER_NUMERAL)
+        SMTD_LT(RT_OUT, KC_ENTER, LAYER_SYMBOLS)
+        // pointer keys
+        SMTD_LT(CKC_Z, KC_Z, LAYER_POINTER)
+        SMTD_LT(CKC_SLSH, KC_SLSH, LAYER_POINTER)
+    }
+}
 
 // actions
 #define _UNDO LGUI(KC_Z)
@@ -275,35 +303,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   /* //                   ╰───────────────────────────╯ ╰──────────────────────────╯ */
   /* ), */
 };
-
-#include "sm_td.h"
-
-smtd_resolution on_smtd_action(uint16_t keycode, smtd_action action, uint8_t tap_count) {
-    switch (keycode) {
-        // left hand hrm
-        SMTD_MT_ON_MKEY(CKC_A, KC_A, KC_LEFT_ALT)
-        SMTD_MT_ON_MKEY(CKC_R, KC_R, KC_LEFT_GUI)
-        SMTD_MT_ON_MKEY(CKC_S, KC_S, KC_LEFT_CTRL)
-        SMTD_MT_ON_MKEY(CKC_T, KC_T, KC_LSFT)
-        // right hand hrm
-        SMTD_MT_ON_MKEY(CKC_N, KC_N, KC_LSFT)
-        SMTD_MT_ON_MKEY(CKC_E, KC_E, KC_LEFT_CTRL)
-        SMTD_MT_ON_MKEY(CKC_I, KC_I, KC_LEFT_GUI)
-        SMTD_MT_ON_MKEY(CKC_O, KC_O, KC_LEFT_ALT)
-        // left thumb cluster
-        SMTD_LT_ON_MKEY(LT_MID, KC_SPACE, LAYER_NAVIGATION)
-        SMTD_LT_ON_MKEY(LT_INR, KC_ESCAPE, LAYER_FUNCTION)
-        // right thumb cluster
-        SMTD_LT_ON_MKEY(RT_INR, KC_TAB, LAYER_MEDIA)
-        SMTD_LT_ON_MKEY(RT_MID, KC_BSPC, LAYER_NUMERAL)
-        SMTD_LT_ON_MKEY(RT_OUT, KC_ENTER, LAYER_SYMBOLS)
-        // pointer keys
-        SMTD_LT_ON_MKEY(CKC_Z, KC_Z, LAYER_POINTER)
-        SMTD_LT_ON_MKEY(CKC_SLSH, KC_SLSH, LAYER_POINTER)
-    }
-
-    return SMTD_RESOLUTION_UNHANDLED;
-}
 
 // clang-format on
 
